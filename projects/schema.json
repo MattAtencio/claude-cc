@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "claude-organizer-projects-config",
+  "title": "Claude Organizer Project Configuration",
+  "description": "Schema for the master project configuration mapping active projects to their associated tools.",
+  "type": "object",
+  "required": ["version", "lastUpdated", "projects", "categories"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path to this schema file for editor validation."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the config format."
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date when the config was last modified."
+    },
+    "projects": {
+      "type": "array",
+      "description": "List of all active projects.",
+      "items": {
+        "$ref": "#/$defs/project"
+      }
+    },
+    "categories": {
+      "type": "object",
+      "description": "Category definitions with display metadata.",
+      "additionalProperties": {
+        "$ref": "#/$defs/category"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "project": {
+      "type": "object",
+      "required": ["id", "name", "path", "category", "color", "tools"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Unique kebab-case identifier for the project."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name."
+        },
+        "path": {
+          "type": "string",
+          "description": "Absolute filesystem path to the project root."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["game", "app", "framework", "infra", "personal"],
+          "description": "Project category for grouping and color coding."
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Hex color code for the project, typically matches the category color."
+        },
+        "tools": {
+          "type": "array",
+          "description": "Tools associated with this project.",
+          "items": {
+            "$ref": "#/$defs/tool"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "tool": {
+      "type": "object",
+      "required": ["name", "type", "command", "icon"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the tool."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["vscode", "obsidian", "browser", "aseprite", "slack", "discord", "terminal", "custom"],
+          "description": "Tool type for categorization and icon defaults."
+        },
+        "command": {
+          "type": "string",
+          "description": "Windows command to launch the tool. Executed from the project path."
+        },
+        "path": {
+          "type": ["string", "null"],
+          "description": "Workspace path the tool should open to, or null if not applicable."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Emoji icon representing the tool."
+        }
+      },
+      "additionalProperties": false
+    },
+    "category": {
+      "type": "object",
+      "required": ["label", "color", "icon"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human-readable category name."
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Hex color for the category."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Emoji icon for the category."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

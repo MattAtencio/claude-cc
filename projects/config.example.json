@@ -1,0 +1,32 @@
+{
+  "$schema": "./schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2026-04-15",
+  "settings": {
+    "devRoot": ""
+  },
+  "projects": [
+    {
+      "id": "my-web-app",
+      "name": "My Web App",
+      "path": "/path/to/my-web-app",
+      "category": "app",
+      "color": "#3b82f6",
+      "tools": [
+        { "name": "VS Code", "type": "vscode", "path": "/path/to/my-web-app", "icon": "code" },
+        { "name": "Browser", "type": "browser", "command": "http://localhost:3000", "icon": "globe" }
+      ]
+    },
+    {
+      "id": "my-game",
+      "name": "My Game",
+      "path": "/path/to/my-game",
+      "category": "game",
+      "color": "#22c55e",
+      "tools": [
+        { "name": "VS Code", "type": "vscode", "path": "/path/to/my-game", "icon": "code" },
+        { "name": "Browser", "type": "browser", "command": "http://localhost:5173", "icon": "globe" }
+      ]
+    }
+  ]
+}

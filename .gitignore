@@ -1,0 +1,12 @@
+node_modules/
+target/
+dist/
+*.exe
+*.msi
+
+# User config contains personal project paths — not tracked
+projects/config.json
+
+# Session state
+sessions.json
+.organizer-state.json
