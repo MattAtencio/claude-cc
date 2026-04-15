@@ -125,7 +125,7 @@ export function TerminalView({
       if (!wrapperRef.current) return;
 
       const container = document.createElement("div");
-      container.className = "xterm-container absolute inset-0";
+      container.className = "xterm-container";
       // Show immediately if this is for the focused project
       container.style.display = showImmediately ? "block" : "none";
       container.dataset.projectId = pid;
@@ -139,6 +139,10 @@ export function TerminalView({
         theme: THEME,
         allowProposedApi: true,
         scrollback: 10000,
+        windowsPty: {
+          backend: "conpty",
+          buildNumber: 19041,
+        },
       });
 
       const fitAddon = new FitAddon();
@@ -147,22 +151,23 @@ export function TerminalView({
 
       terminal.open(container);
 
-      // Fit immediately, then retry after layout settles
-      // This is critical — PTY must know the real column width
-      fitAddon.fit();
-      setTimeout(() => {
+      // Fit with aggressive retries — PTY MUST know real dimensions
+      // Each fit() triggers onResize which sends resize_session to PTY backend
+      const doFit = () => {
         try {
           fitAddon.fit();
         } catch {}
-      }, 100);
-      setTimeout(() => {
-        try {
-          fitAddon.fit();
-        } catch {}
-      }, 500);
+      };
+
+      // Immediate fit
+      doFit();
+      // Retries as layout settles (flex reflow, container dimensions stabilize)
+      for (const delay of [50, 150, 300, 600, 1000]) {
+        setTimeout(doFit, delay);
+      }
 
       if (showImmediately) {
-        terminal.focus();
+        setTimeout(() => terminal.focus(), 100);
       }
 
       // Track output timestamps for activity detection
@@ -364,7 +369,7 @@ export function TerminalView({
       </div>
 
       {/* Terminal wrapper — all terminal divs live here */}
-      <div ref={wrapperRef} className="flex-1 min-h-0 bg-[#0a0a0a] relative">
+      <div ref={wrapperRef} className="flex-1 min-h-0 bg-[#0a0a0a] relative overflow-hidden">
         {!hasActiveSession && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-[#0a0a0a]">
             <div className="w-full max-w-lg px-8">

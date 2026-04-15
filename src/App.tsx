@@ -267,7 +267,7 @@ function App() {
         onNewSession={handleNewSession}
       />
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <SessionBar
           projects={projects}
           sessions={sessions}
@@ -276,8 +276,8 @@ function App() {
           onSelect={setSelectedProjectId}
         />
 
-        <div className="flex-1 flex min-h-0">
-          <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex min-h-0 overflow-hidden">
+          <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
             <TerminalView
               projectId={selectedProjectId}
               projectName={activeProject?.name}
