@@ -7,7 +7,9 @@ import { SessionBar } from "./components/SessionBar";
 import { TerminalView, type SessionActivity } from "./components/Terminal";
 import { ToolBar } from "./components/ToolBar";
 import CommandPalette from "./components/CommandPalette";
+import { TimelinePanel } from "./components/TimelinePanel";
 import { SetupScreen } from "./components/SetupScreen";
+import { useTimeline } from "./hooks/useTimeline";
 import type { SessionStatus } from "./types";
 
 // Map backend SessionState strings to frontend activity
@@ -177,6 +179,9 @@ function App() {
   }, [projects, sessions, selectedProjectId, paletteOpen]);
 
   const activeProject = projects.find((p) => p.id === selectedProjectId);
+  const sessionSet = new Set(sessions.map((s) => s.projectId));
+  const hasActiveSession = selectedProjectId ? sessionSet.has(selectedProjectId) : false;
+  const { metrics: timelineMetrics } = useTimeline(selectedProjectId, hasActiveSession);
 
   // New ad-hoc session handler
   const handleNewSession = useCallback(async () => {
@@ -271,19 +276,29 @@ function App() {
           onSelect={setSelectedProjectId}
         />
 
-        <TerminalView
-          projectId={selectedProjectId}
-          projectName={activeProject?.name}
-          projectColor={activeProject?.color}
-          sessions={sessions}
-          onSessionChange={pollSessions}
-          onActivityChange={setActivity}
-        />
+        <div className="flex-1 flex min-h-0">
+          <div className="flex-1 flex flex-col min-w-0">
+            <TerminalView
+              projectId={selectedProjectId}
+              projectName={activeProject?.name}
+              projectColor={activeProject?.color}
+              sessions={sessions}
+              onSessionChange={pollSessions}
+              onActivityChange={setActivity}
+            />
 
-        <ToolBar
-          tools={activeProject?.tools ?? []}
-          projectPath={activeProject?.path}
-        />
+            <ToolBar
+              tools={activeProject?.tools ?? []}
+              projectPath={activeProject?.path}
+            />
+          </div>
+
+          <TimelinePanel
+            metrics={timelineMetrics}
+            projectId={selectedProjectId}
+            hasActiveSession={hasActiveSession}
+          />
+        </div>
       </div>
 
       {/* Command Palette */}
