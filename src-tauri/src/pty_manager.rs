@@ -128,12 +128,22 @@ pub fn create_pty_session(
     project_path: &str,
     app_handle: tauri::AppHandle,
 ) -> Result<PtySession, String> {
+    create_pty_session_with_size(project_id, project_path, 24, 80, app_handle)
+}
+
+pub fn create_pty_session_with_size(
+    project_id: &str,
+    project_path: &str,
+    rows: u16,
+    cols: u16,
+    app_handle: tauri::AppHandle,
+) -> Result<PtySession, String> {
     let pty_system = native_pty_system();
 
     let pair = pty_system
         .openpty(PtySize {
-            rows: 30,
-            cols: 120,
+            rows,
+            cols,
             pixel_width: 0,
             pixel_height: 0,
         })
@@ -217,10 +227,11 @@ pub fn reconnect_session(
 ) -> Result<PtySession, String> {
     let pty_system = native_pty_system();
 
+    // Start at conservative 80 cols — frontend will resize immediately after attach
     let pair = pty_system
         .openpty(PtySize {
-            rows: 30,
-            cols: 120,
+            rows: 24,
+            cols: 80,
             pixel_width: 0,
             pixel_height: 0,
         })

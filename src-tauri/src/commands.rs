@@ -38,6 +38,8 @@ pub fn get_config_path(app_handle: tauri::AppHandle) -> String {
 pub fn create_session(
     project_id: String,
     initial_prompt: Option<String>,
+    rows: Option<u16>,
+    cols: Option<u16>,
     app_handle: tauri::AppHandle,
     state: State<AppState>,
 ) -> Result<(), String> {
@@ -51,7 +53,13 @@ pub fn create_session(
     let project_path = project.path.clone();
     drop(config); // Release the config lock
 
-    let session = pty_manager::create_pty_session(&project_id, &project_path, app_handle)?;
+    let session = pty_manager::create_pty_session_with_size(
+        &project_id,
+        &project_path,
+        rows.unwrap_or(24),
+        cols.unwrap_or(80),
+        app_handle,
+    )?;
 
     // If an initial prompt was provided, send it after a brief delay
     // to let Claude CLI initialize

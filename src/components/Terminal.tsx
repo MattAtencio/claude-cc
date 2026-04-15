@@ -146,7 +146,20 @@ export function TerminalView({
       terminal.loadAddon(new WebLinksAddon());
 
       terminal.open(container);
+
+      // Fit immediately, then retry after layout settles
+      // This is critical — PTY must know the real column width
       fitAddon.fit();
+      setTimeout(() => {
+        try {
+          fitAddon.fit();
+        } catch {}
+      }, 100);
+      setTimeout(() => {
+        try {
+          fitAddon.fit();
+        } catch {}
+      }, 500);
 
       if (showImmediately) {
         terminal.focus();
@@ -207,12 +220,15 @@ export function TerminalView({
         container.style.display = "block";
         const instance = instancesRef.current.get(pid);
         if (instance) {
-          setTimeout(() => {
-            try {
-              instance.fitAddon.fit();
-              instance.terminal.focus();
-            } catch {}
-          }, 50);
+          // Multiple fit retries — container dimensions may not be stable immediately
+          for (const delay of [0, 50, 150, 400]) {
+            setTimeout(() => {
+              try {
+                instance.fitAddon.fit();
+                if (delay === 50) instance.terminal.focus();
+              } catch {}
+            }, delay);
+          }
         }
       } else {
         container.style.display = "none";
@@ -220,25 +236,28 @@ export function TerminalView({
     }
   }, [projectId, hasActiveSession]);
 
-  // Handle container resize
+  // Handle container resize — fit ALL visible terminals
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
     const observer = new ResizeObserver(() => {
-      if (projectId) {
-        const instance = instancesRef.current.get(projectId);
-        if (instance) {
-          try {
-            instance.fitAddon.fit();
-          } catch {}
+      // Fit whichever terminal is currently visible
+      for (const [pid, container] of containersRef.current) {
+        if (container.style.display !== "none") {
+          const instance = instancesRef.current.get(pid);
+          if (instance) {
+            try {
+              instance.fitAddon.fit();
+            } catch {}
+          }
         }
       }
     });
 
     observer.observe(wrapper);
     return () => observer.disconnect();
-  }, [projectId]);
+  }, []);
 
   // Cleanup all on unmount
   useEffect(() => {
@@ -254,13 +273,32 @@ export function TerminalView({
     };
   }, []);
 
+  // Measure the wrapper to calculate initial PTY dimensions
+  function measureTerminalSize(): { rows: number; cols: number } {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return { rows: 24, cols: 80 };
+
+    // Use xterm's cell size calculation: fontSize 13 with monospace font
+    // Approximate: char width ~7.8px, line height ~17px at 13px font
+    const charWidth = 7.8;
+    const lineHeight = 17;
+    const cols = Math.max(40, Math.floor(wrapper.clientWidth / charWidth) - 1);
+    const rows = Math.max(10, Math.floor(wrapper.clientHeight / lineHeight) - 1);
+    return { rows, cols };
+  }
+
   async function handleStartSession(initialPrompt?: string) {
     if (!projectId || sessionLoading) return;
     setSessionLoading(true);
     try {
+      // Measure container BEFORE creating session so PTY starts at correct size
+      const { rows, cols } = measureTerminalSize();
+
       await invoke("create_session", {
         projectId,
         initialPrompt: initialPrompt || null,
+        rows,
+        cols,
       });
       onSessionChange();
       // Attach terminal and show it immediately — don't wait for poll
