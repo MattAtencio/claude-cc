@@ -4,6 +4,7 @@ use tauri::Emitter;
 
 mod commands;
 mod config;
+mod orchestrator;
 mod output_parser;
 pub mod persistence;
 mod process_scanner;
@@ -29,7 +30,34 @@ pub fn run() {
             let loaded_config = config::load_config(Some(app.handle()))
                 .unwrap_or_default();
             let state = app.state::<AppState>();
-            *state.config.lock().unwrap() = loaded_config;
+            *state.config.lock().unwrap() = loaded_config.clone();
+
+            // Write orchestrator context file to main project directory
+            // This lets the Home Office Claude know how to use Command
+            let scripts_path = loaded_config
+                .settings
+                .as_ref()
+                .and_then(|s| s.scripts_path.clone())
+                .unwrap_or_else(|| {
+                    // Auto-detect: look next to the executable or in the repo
+                    let exe_dir = std::env::current_exe()
+                        .ok()
+                        .and_then(|p| p.parent().map(|p| p.to_path_buf()));
+                    // Check common locations
+                    for candidate in [
+                        exe_dir.as_ref().map(|d| d.join("scripts")),
+                        Some(std::path::PathBuf::from("C:/dev/claude-organizer/scripts")),
+                    ]
+                    .into_iter()
+                    .flatten()
+                    {
+                        if candidate.join("start-session.py").exists() {
+                            return candidate.to_string_lossy().to_string();
+                        }
+                    }
+                    "scripts".to_string()
+                });
+            orchestrator::write_orchestrator_context(&loaded_config, &scripts_path);
 
             // Background thread to monitor for permission-blocked sessions
             let app_handle_for_thread = app.handle().clone();

@@ -8,6 +8,8 @@ pub struct Settings {
     pub dev_root: Option<String>,
     /// Display name for the main/home project (default: "Main")
     pub main_label: Option<String>,
+    /// Path to the start-session script (auto-detected if not set)
+    pub scripts_path: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
