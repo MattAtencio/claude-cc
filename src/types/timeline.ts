@@ -1,40 +1,42 @@
-export type TimelineStepType =
-  | "tool-call"
-  | "approval"
-  | "commit"
-  | "test-pass"
-  | "test-fail"
-  | "deploy"
-  | "error"
-  | "output";
-
-export interface TimelineStep {
-  id: string;
-  type: TimelineStepType;
-  name: string;
-  detail?: string;
-  timestamp: number;
-  duration?: number;
+export interface TokenUsage {
+  input: number;
+  output: number;
 }
 
-export interface TimelinePhase {
+export interface ToolCall {
+  id: string;
+  tool: string;
+  detail: string;
+  timestamp: number;
+  tokens: TokenUsage;
+}
+
+export interface Activity {
+  id: string;
+  type: "research" | "implementation" | "testing" | "approval" | "commit" | "deploy" | "error";
+  label: string;
+  startedAt: number;
+  endedAt?: number;
+  status: "active" | "completed";
+  toolCalls: ToolCall[];
+  tokens: TokenUsage;
+}
+
+export interface Wave {
   id: string;
   name: string;
   startedAt: number;
   endedAt?: number;
   status: "active" | "completed";
-  steps: TimelineStep[];
-  toolCalls: number;
-  approvals: number;
+  activities: Activity[];
+  tokens: TokenUsage;
 }
 
-export interface TimelineMetrics {
+export interface SessionTimeline {
   startedAt: number;
+  waves: Wave[];
+  totalTokens: TokenUsage;
+  estimatedCost: string;
   totalToolCalls: number;
-  toolCallsByType: Record<string, number>;
   totalApprovals: number;
-  stateChanges: number;
-  currentState: string;
-  estimatedCost?: string;
-  phases: TimelinePhase[];
 }

@@ -181,7 +181,7 @@ function App() {
   const activeProject = projects.find((p) => p.id === selectedProjectId);
   const sessionSet = new Set(sessions.map((s) => s.projectId));
   const hasActiveSession = selectedProjectId ? sessionSet.has(selectedProjectId) : false;
-  const { metrics: timelineMetrics } = useTimeline(selectedProjectId, hasActiveSession);
+  const { timeline } = useTimeline(selectedProjectId, hasActiveSession);
 
   // New ad-hoc session handler
   const handleNewSession = useCallback(async () => {
@@ -294,7 +294,7 @@ function App() {
           </div>
 
           <TimelinePanel
-            metrics={timelineMetrics}
+            timeline={timeline}
             projectId={selectedProjectId}
             hasActiveSession={hasActiveSession}
           />
