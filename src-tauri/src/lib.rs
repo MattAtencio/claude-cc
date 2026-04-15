@@ -8,6 +8,7 @@ mod output_parser;
 pub mod persistence;
 mod process_scanner;
 mod pty_manager;
+mod queue;
 mod window_focus;
 
 pub struct AppState {
@@ -63,6 +64,81 @@ pub fn run() {
                         }
                     }
                     previously_blocked = currently_blocked;
+                }
+            });
+
+            // Queue watcher — polls for session requests from CLI orchestrator
+            let queue_handle = app.handle().clone();
+            std::thread::spawn(move || {
+                loop {
+                    std::thread::sleep(std::time::Duration::from_secs(2));
+
+                    let requests = queue::drain_queue(Some(&queue_handle));
+                    if requests.is_empty() {
+                        continue;
+                    }
+
+                    let state = match queue_handle.try_state::<AppState>() {
+                        Some(s) => s,
+                        None => continue,
+                    };
+
+                    for req in requests {
+                        // Look up project path from config
+                        let project_path = {
+                            let config = match state.config.lock() {
+                                Ok(c) => c,
+                                Err(_) => continue,
+                            };
+                            config.projects.iter()
+                                .find(|p| p.id == req.project_id)
+                                .map(|p| p.path.clone())
+                        };
+
+                        let project_path = match project_path {
+                            Some(p) => p,
+                            None => {
+                                eprintln!("Queue: project '{}' not found in config", req.project_id);
+                                continue;
+                            }
+                        };
+
+                        // Create PTY session
+                        match pty_manager::create_pty_session_with_size(
+                            &req.project_id,
+                            &project_path,
+                            24, 80,
+                            queue_handle.clone(),
+                        ) {
+                            Ok(session) => {
+                                // Send initial prompt if provided
+                                if let Some(prompt) = &req.prompt {
+                                    let writer = session.writer.clone();
+                                    let prompt = prompt.clone();
+                                    std::thread::spawn(move || {
+                                        std::thread::sleep(std::time::Duration::from_secs(3));
+                                        if let Ok(mut w) = writer.lock() {
+                                            use std::io::Write;
+                                            let _ = w.write_all(format!("{}\n", prompt).as_bytes());
+                                            let _ = w.flush();
+                                        }
+                                    });
+                                }
+
+                                // Insert into sessions map
+                                if let Ok(mut sessions) = state.pty_sessions.lock() {
+                                    sessions.insert(req.project_id.clone(), session);
+                                }
+
+                                // Notify frontend a new session was created
+                                let _ = queue_handle.emit("session-created", &req.project_id);
+                                eprintln!("Queue: started session for '{}'", req.project_id);
+                            }
+                            Err(e) => {
+                                eprintln!("Queue: failed to start session for '{}': {}", req.project_id, e);
+                            }
+                        }
+                    }
                 }
             });
 

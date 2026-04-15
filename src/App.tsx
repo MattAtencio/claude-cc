@@ -100,9 +100,19 @@ function App() {
   useEffect(() => {
     pollSessions();
     pollRef.current = setInterval(pollSessions, 2000);
+
+    // Listen for sessions created by the queue watcher (orchestrator bridge)
+    let unlistenCreated: (() => void) | null = null;
+    listen<string>("session-created", () => {
+      // Immediately poll to pick up the new session
+      pollSessions();
+    }).then((fn) => {
+      unlistenCreated = fn;
+    });
+
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
-      // Cleanup all listeners
+      unlistenCreated?.();
       for (const [, unlisten] of stateListenersRef.current) {
         unlisten();
       }
