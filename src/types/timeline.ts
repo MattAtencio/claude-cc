@@ -1,8 +1,11 @@
 export type TimelineStepType =
-  | "state-change"
   | "tool-call"
   | "approval"
   | "commit"
+  | "test-pass"
+  | "test-fail"
+  | "deploy"
+  | "error"
   | "output";
 
 export interface TimelineStep {
@@ -32,5 +35,6 @@ export interface TimelineMetrics {
   totalApprovals: number;
   stateChanges: number;
   currentState: string;
+  estimatedCost?: string;
   phases: TimelinePhase[];
 }

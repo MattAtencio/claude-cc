@@ -21,7 +21,10 @@ const STEP_COLORS: Record<string, string> = {
   "tool-call": "#a855f7",
   approval: "#ef4444",
   commit: "#22c55e",
-  "state-change": "#6b7280",
+  "test-pass": "#22c55e",
+  "test-fail": "#ef4444",
+  deploy: "#3b82f6",
+  error: "#ef4444",
   output: "#6b7280",
 };
 
@@ -53,10 +56,24 @@ function StepIcon({ type }: { type: string }) {
       </svg>
     );
   }
-  if (type === "commit") {
+  if (type === "commit" || type === "test-pass") {
     return (
       <svg width="12" height="12" viewBox="0 0 16 16" fill={color}>
         <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+      </svg>
+    );
+  }
+  if (type === "test-fail" || type === "error") {
+    return (
+      <svg width="12" height="12" viewBox="0 0 16 16" fill={color}>
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+      </svg>
+    );
+  }
+  if (type === "deploy") {
+    return (
+      <svg width="12" height="12" viewBox="0 0 16 16" fill={color}>
+        <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5ZM3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.58 26.58 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.933.933 0 0 1-.765.935c-.845.147-2.34.346-4.235.346-1.895 0-3.39-.2-4.235-.346A.933.933 0 0 1 3 9.219V8.062Zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a.25.25 0 1 0 .35.356l.486-.477V10a.25.25 0 1 0 .5 0V8.11l.486.477a.25.25 0 0 0 .35-.356l-.92-.9a.25.25 0 0 0-.115-.069Z"/>
       </svg>
     );
   }
@@ -208,7 +225,10 @@ export function TimelinePanel({ metrics, projectId, hasActiveSession }: Timeline
       <div className="border-b border-gray-800/50 flex items-center justify-around py-1">
         <MetricPill label="Tools" value={metrics.totalToolCalls} color="#a855f7" />
         <MetricPill label="Approvals" value={metrics.totalApprovals} color="#ef4444" />
-        <MetricPill label="Phases" value={metrics.phases.length} color="#60a5fa" />
+        <MetricPill label="Waves" value={metrics.phases.length} color="#60a5fa" />
+        {metrics.estimatedCost && (
+          <MetricPill label="Cost" value={`$${metrics.estimatedCost}`} color="#f59e0b" />
+        )}
       </div>
 
       {/* Tool breakdown */}
