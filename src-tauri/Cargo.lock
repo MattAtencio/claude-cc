@@ -315,8 +315,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "claude-cc"
-version = "0.1.0"
+name = "combine"
+version = "4.6.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba5a308b75df32fe02788e748662718f03fde005016435c444eea572398219fd"
+dependencies = [
+ "bytes",
+ "memchr",
+]
+
+[[package]]
+name = "command"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "portable-pty",
@@ -328,16 +338,6 @@ dependencies = [
  "tauri-plugin-shell",
  "tokio",
  "windows 0.58.0",
-]
-
-[[package]]
-name = "combine"
-version = "4.6.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba5a308b75df32fe02788e748662718f03fde005016435c444eea572398219fd"
-dependencies = [
- "bytes",
- "memchr",
 ]
 
 [[package]]

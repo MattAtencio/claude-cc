@@ -64,6 +64,7 @@ export function TerminalView({
   const containersRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [sessionLoading, setSessionLoading] = useState(false);
+  const [promptInput, setPromptInput] = useState("");
   const [, setTick] = useState(0);
 
   // Activity tracking: last output time per session
@@ -253,11 +254,14 @@ export function TerminalView({
     };
   }, []);
 
-  async function handleStartSession() {
+  async function handleStartSession(initialPrompt?: string) {
     if (!projectId || sessionLoading) return;
     setSessionLoading(true);
     try {
-      await invoke("create_session", { projectId });
+      await invoke("create_session", {
+        projectId,
+        initialPrompt: initialPrompt || null,
+      });
       onSessionChange();
       // Attach terminal and show it immediately — don't wait for poll
       await attachTerminal(projectId, true);
@@ -310,7 +314,7 @@ export function TerminalView({
               </button>
             ) : (
               <button
-                onClick={handleStartSession}
+                onClick={() => handleStartSession()}
                 disabled={sessionLoading}
                 className="text-[10px] px-2 py-1 rounded bg-green-900/30 text-green-400 hover:bg-green-900/50 transition-colors disabled:opacity-50"
               >
@@ -325,22 +329,44 @@ export function TerminalView({
       <div ref={wrapperRef} className="flex-1 min-h-0 bg-[#0a0a0a] relative">
         {!hasActiveSession && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-[#0a0a0a]">
-            <div className="text-center">
+            <div className="w-full max-w-lg px-8">
               {projectId ? (
-                <>
-                  <div className="text-gray-500 text-sm mb-3">
+                <div className="space-y-4">
+                  <div className="text-gray-500 text-sm text-center">
                     No active session for {projectName}
                   </div>
-                  <button
-                    onClick={handleStartSession}
-                    disabled={sessionLoading}
-                    className="px-4 py-2 rounded bg-white/5 text-gray-300 hover:bg-white/10 transition-colors text-sm disabled:opacity-50"
-                  >
-                    {sessionLoading ? "Starting..." : "Start Claude Session"}
-                  </button>
-                </>
+
+                  {/* Prompt input */}
+                  <textarea
+                    value={promptInput}
+                    onChange={(e) => setPromptInput(e.target.value)}
+                    placeholder="Optional: Enter a spec or prompt to kick off autonomous work..."
+                    className="w-full h-28 bg-[#111] border border-gray-800 rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-700 resize-none focus:outline-none focus:border-purple-500/50 font-mono"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        handleStartSession(promptInput.trim() || undefined);
+                      }
+                    }}
+                  />
+
+                  <div className="flex items-center gap-3 justify-center">
+                    <button
+                      onClick={() => handleStartSession(promptInput.trim() || undefined)}
+                      disabled={sessionLoading}
+                      className="px-4 py-2 rounded bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 transition-colors text-sm disabled:opacity-50 font-medium"
+                    >
+                      {sessionLoading
+                        ? "Starting..."
+                        : promptInput.trim()
+                          ? "Start with Spec"
+                          : "Start Session"}
+                    </button>
+                    <span className="text-[10px] text-gray-600">Ctrl+Enter</span>
+                  </div>
+                </div>
               ) : (
-                <div className="text-gray-600 text-sm font-mono">
+                <div className="text-gray-600 text-sm font-mono text-center">
                   Select a project from the sidebar
                 </div>
               )}

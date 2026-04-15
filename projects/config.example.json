@@ -3,9 +3,20 @@
   "version": "1.0.0",
   "lastUpdated": "2026-04-15",
   "settings": {
-    "devRoot": ""
+    "devRoot": "",
+    "mainLabel": "Main"
   },
   "projects": [
+    {
+      "id": "main",
+      "name": "Main",
+      "path": "/path/to/your/home",
+      "category": "main",
+      "color": "#a855f7",
+      "tools": [
+        { "name": "Terminal", "type": "terminal", "path": "/path/to/your/home", "icon": "terminal" }
+      ]
+    },
     {
       "id": "my-web-app",
       "name": "My Web App",

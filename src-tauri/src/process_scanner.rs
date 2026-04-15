@@ -24,7 +24,7 @@ pub fn scan_claude_processes() -> Vec<ClaudeProcess> {
             || process
                 .cmd()
                 .iter()
-                .any(|arg| arg.contains("claude") && !arg.contains("claude-cc"))
+                .any(|arg| arg.contains("claude") && !arg.contains("command"))
         {
             let cmd: Vec<String> = process.cmd().to_vec();
             let cwd = process.cwd().map(|p| p.to_string_lossy().to_string());

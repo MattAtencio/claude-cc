@@ -11,9 +11,9 @@ export function SetupScreen() {
   return (
     <div className="flex h-screen w-screen bg-[#0a0a0a] text-gray-200 items-center justify-center">
       <div className="max-w-lg mx-auto text-center space-y-6 px-8">
-        <h1 className="text-2xl font-bold text-white">Welcome to Claude CC</h1>
+        <h1 className="text-2xl font-bold text-white">Welcome to Command</h1>
         <p className="text-gray-400 text-sm leading-relaxed">
-          Claude CC manages multiple Claude CLI sessions across your projects.
+          Command manages multiple Claude CLI sessions across your projects.
           To get started, create a config file with your projects.
         </p>
 
@@ -35,7 +35,7 @@ export function SetupScreen() {
             </p>
 
             <p>
-              <span className="text-gray-500">3.</span> Restart Claude CC.
+              <span className="text-gray-500">3.</span> Restart Command.
             </p>
           </div>
         </div>
@@ -47,7 +47,7 @@ export function SetupScreen() {
         )}
 
         <p className="text-xs text-gray-600">
-          Or set <span className="font-mono text-gray-500">CLAUDE_CC_CONFIG</span> env var to use a custom path.
+          Or set <span className="font-mono text-gray-500">COMMAND_CONFIG</span> env var to use a custom path.
         </p>
       </div>
     </div>

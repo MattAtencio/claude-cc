@@ -1,4 +1,5 @@
 use crate::config::{self, ProjectConfig};
+use std::io::Write;
 use crate::persistence;
 use crate::process_scanner;
 use crate::pty_manager;
@@ -36,6 +37,7 @@ pub fn get_config_path(app_handle: tauri::AppHandle) -> String {
 #[tauri::command]
 pub fn create_session(
     project_id: String,
+    initial_prompt: Option<String>,
     app_handle: tauri::AppHandle,
     state: State<AppState>,
 ) -> Result<(), String> {
@@ -50,6 +52,21 @@ pub fn create_session(
     drop(config); // Release the config lock
 
     let session = pty_manager::create_pty_session(&project_id, &project_path, app_handle)?;
+
+    // If an initial prompt was provided, send it after a brief delay
+    // to let Claude CLI initialize
+    if let Some(prompt) = initial_prompt {
+        let writer = session.writer.clone();
+        std::thread::spawn(move || {
+            // Wait for Claude to show its prompt
+            std::thread::sleep(std::time::Duration::from_secs(3));
+            if let Ok(mut w) = writer.lock() {
+                let prompt_with_newline = format!("{}\n", prompt);
+                let _ = w.write_all(prompt_with_newline.as_bytes());
+                let _ = w.flush();
+            }
+        });
+    }
 
     let mut sessions = state.pty_sessions.lock().map_err(|e| e.to_string())?;
     sessions.insert(project_id, session);

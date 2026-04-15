@@ -5,6 +5,7 @@ import type { ProjectConfig } from "../types";
 export type GroupedProjects = Record<ProjectConfig["category"], ProjectConfig[]>;
 
 const CATEGORY_ORDER: ProjectConfig["category"][] = [
+  "main",
   "game",
   "app",
   "framework",

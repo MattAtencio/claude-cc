@@ -4,7 +4,12 @@ export interface ProjectConfig {
   path: string;
   tools: ToolConfig[];
   color?: string;
-  category: "game" | "app" | "framework" | "infra" | "personal" | "adhoc" | "discovered";
+  category: "main" | "game" | "app" | "framework" | "infra" | "personal" | "adhoc" | "discovered";
+}
+
+export interface AppSettings {
+  devRoot?: string;
+  mainLabel?: string;
 }
 
 export interface ToolConfig {

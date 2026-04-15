@@ -1,12 +1,12 @@
 [package]
-name = "claude-cc"
-version = "0.1.0"
-description = "Desktop control center for managing multiple Claude CLI sessions"
+name = "command"
+version = "0.2.0"
+description = "CTO command post for orchestrating autonomous Claude agent teams"
 authors = []
 edition = "2021"
 
 [lib]
-name = "claude_cc_lib"
+name = "command_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]

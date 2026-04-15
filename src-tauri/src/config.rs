@@ -6,6 +6,8 @@ use std::path::PathBuf;
 pub struct Settings {
     /// Root directory to scan for undiscovered repos (e.g., "C:/dev" or "~/projects")
     pub dev_root: Option<String>,
+    /// Display name for the main/home project (default: "Main")
+    pub main_label: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -60,7 +62,7 @@ pub fn config_dir(app_handle: Option<&tauri::AppHandle>) -> PathBuf {
 
 pub fn config_path(app_handle: Option<&tauri::AppHandle>) -> PathBuf {
     // Check env var override first
-    if let Ok(p) = std::env::var("CLAUDE_CC_CONFIG") {
+    if let Ok(p) = std::env::var("COMMAND_CONFIG") {
         return PathBuf::from(p);
     }
     config_dir(app_handle).join("config.json")
