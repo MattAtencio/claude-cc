@@ -1,0 +1,446 @@
+{
+  "$schema": "Session Timeline v0.1 — Claude CC",
+  "_description": "Example timeline from a Forge & Field CTO Flow sprint session. This is what the right-panel tree view would render.",
+
+  "session": {
+    "id": "sess_a7f3c891-4e2d-4a1b-9c5e-8d3f2b1a0e6c",
+    "project": "forge-and-field",
+    "startedAt": "2026-04-12T09:15:00Z",
+    "endedAt": "2026-04-12T12:42:00Z",
+    "duration": "3h 27m",
+    "model": "claude-opus-4-6",
+    "resumeCount": 0,
+    "outcome": "shipped"
+  },
+
+  "metrics": {
+    "totalApprovals": 47,
+    "approvalsByType": {
+      "bash": 28,
+      "edit": 11,
+      "write": 5,
+      "agent": 3
+    },
+    "totalToolCalls": 312,
+    "toolCallsByType": {
+      "bash": 89,
+      "read": 72,
+      "edit": 54,
+      "grep": 38,
+      "write": 21,
+      "glob": 19,
+      "agent": 12,
+      "webSearch": 4,
+      "webFetch": 3
+    },
+    "filesChanged": 34,
+    "filesCreated": 8,
+    "linesAdded": 1847,
+    "linesRemoved": 423,
+    "commits": 6,
+    "testsRun": 4,
+    "testsPassed": 4,
+    "contextResets": 0,
+    "compactions": 2,
+    "peakContextPct": 78,
+    "estimatedTokens": 847000,
+    "approvalWaitTime": "4m 12s",
+    "avgTimeBetweenApprovals": "5.4s"
+  },
+
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Planning & Standup",
+      "startedAt": "2026-04-12T09:15:00Z",
+      "endedAt": "2026-04-12T09:23:00Z",
+      "duration": "8m",
+      "status": "completed",
+      "icon": "clipboard",
+      "summary": "Ran /standup, reviewed backlog, identified 4 sprint tasks from GAME-A-PALOOZA.md",
+      "toolCalls": 18,
+      "approvals": 1,
+      "children": [
+        {
+          "id": "step-1a",
+          "type": "command",
+          "name": "/standup",
+          "startedAt": "2026-04-12T09:15:00Z",
+          "duration": "2m",
+          "status": "completed",
+          "detail": "Git log, open issues, plan review"
+        },
+        {
+          "id": "step-1b",
+          "type": "research",
+          "name": "Read GAME-A-PALOOZA.md",
+          "startedAt": "2026-04-12T09:17:00Z",
+          "duration": "1m",
+          "status": "completed",
+          "detail": "Identified: mobile viewport, save system, sound toggle, balance pass"
+        },
+        {
+          "id": "step-1c",
+          "type": "plan",
+          "name": "Sprint plan created",
+          "startedAt": "2026-04-12T09:18:00Z",
+          "duration": "5m",
+          "status": "completed",
+          "detail": "4 tasks scoped, ordered by dependency, estimated 2-3h"
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Wave 1 — Mobile Viewport Fix",
+      "startedAt": "2026-04-12T09:23:00Z",
+      "endedAt": "2026-04-12T09:58:00Z",
+      "duration": "35m",
+      "status": "completed",
+      "icon": "monitor",
+      "summary": "Fixed viewport scaling, touch targets, and responsive grid for mobile devices",
+      "toolCalls": 78,
+      "approvals": 12,
+      "filesChanged": 9,
+      "linesAdded": 342,
+      "linesRemoved": 87,
+      "children": [
+        {
+          "id": "step-2a",
+          "type": "research",
+          "name": "Audit current viewport handling",
+          "startedAt": "2026-04-12T09:23:00Z",
+          "duration": "4m",
+          "status": "completed",
+          "toolCalls": 12,
+          "approvals": 0,
+          "detail": "Read 6 component files, found hardcoded px values and missing meta viewport"
+        },
+        {
+          "id": "step-2b",
+          "type": "implementation",
+          "name": "Add viewport meta + responsive CSS",
+          "startedAt": "2026-04-12T09:27:00Z",
+          "duration": "12m",
+          "status": "completed",
+          "toolCalls": 24,
+          "approvals": 5,
+          "detail": "Updated index.html, converted px→rem in 4 components, added media queries",
+          "filesChanged": ["src/index.html", "src/components/GameBoard.tsx", "src/components/Inventory.tsx", "src/components/CraftingPanel.tsx", "src/styles/game.css"]
+        },
+        {
+          "id": "step-2c",
+          "type": "implementation",
+          "name": "Fix touch targets (min 44px)",
+          "startedAt": "2026-04-12T09:39:00Z",
+          "duration": "8m",
+          "status": "completed",
+          "toolCalls": 16,
+          "approvals": 3,
+          "detail": "Enlarged buttons, added touch-action CSS, fixed overlapping hit areas"
+        },
+        {
+          "id": "step-2d",
+          "type": "verification",
+          "name": "Dev server test + screenshot",
+          "startedAt": "2026-04-12T09:47:00Z",
+          "duration": "6m",
+          "status": "completed",
+          "toolCalls": 8,
+          "approvals": 2,
+          "detail": "Launched dev server, tested 3 breakpoints (375px, 768px, 1440px), all passing"
+        },
+        {
+          "id": "step-2e",
+          "type": "commit",
+          "name": "git commit: Fix mobile viewport and touch targets",
+          "startedAt": "2026-04-12T09:53:00Z",
+          "duration": "1m",
+          "status": "completed",
+          "toolCalls": 4,
+          "approvals": 1,
+          "detail": "9 files, +342 -87"
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "Wave 2 — Save System",
+      "startedAt": "2026-04-12T09:58:00Z",
+      "endedAt": "2026-04-12T11:05:00Z",
+      "duration": "1h 7m",
+      "status": "completed",
+      "icon": "save",
+      "summary": "Implemented localStorage save/load with auto-save, manual save button, and migration system",
+      "toolCalls": 112,
+      "approvals": 18,
+      "filesChanged": 14,
+      "linesAdded": 890,
+      "linesRemoved": 156,
+      "children": [
+        {
+          "id": "step-3a",
+          "type": "research",
+          "name": "Audit game state shape",
+          "startedAt": "2026-04-12T09:58:00Z",
+          "duration": "6m",
+          "status": "completed",
+          "toolCalls": 14,
+          "approvals": 0,
+          "detail": "Mapped Zustand store: 12 slices, 3 circular refs to handle, ~4KB serialized"
+        },
+        {
+          "id": "step-3b",
+          "type": "implementation",
+          "name": "Create save/load service",
+          "startedAt": "2026-04-12T10:04:00Z",
+          "duration": "18m",
+          "status": "completed",
+          "toolCalls": 32,
+          "approvals": 6,
+          "detail": "SaveManager class: serialize, compress, versioned schema, migration hooks",
+          "filesChanged": ["src/services/SaveManager.ts", "src/services/migrations.ts", "src/types/save.ts"]
+        },
+        {
+          "id": "step-3c",
+          "type": "implementation",
+          "name": "Wire auto-save + manual save UI",
+          "startedAt": "2026-04-12T10:22:00Z",
+          "duration": "15m",
+          "status": "completed",
+          "toolCalls": 28,
+          "approvals": 5,
+          "detail": "Auto-save every 30s, save on tab blur, manual save button with toast feedback"
+        },
+        {
+          "id": "step-3d",
+          "type": "implementation",
+          "name": "Add load on startup + new game flow",
+          "startedAt": "2026-04-12T10:37:00Z",
+          "duration": "12m",
+          "status": "completed",
+          "toolCalls": 20,
+          "approvals": 4,
+          "detail": "Detect existing save, prompt continue/new game, handle corrupt save gracefully"
+        },
+        {
+          "id": "step-3e",
+          "type": "verification",
+          "name": "Test save/load cycle",
+          "startedAt": "2026-04-12T10:49:00Z",
+          "duration": "8m",
+          "status": "completed",
+          "toolCalls": 10,
+          "approvals": 2,
+          "detail": "Save → refresh → load verified, migration from v0→v1 tested, corrupt JSON handled"
+        },
+        {
+          "id": "step-3f",
+          "type": "commit",
+          "name": "git commit: Add save system with auto-save and migrations",
+          "startedAt": "2026-04-12T10:57:00Z",
+          "duration": "1m",
+          "status": "completed",
+          "toolCalls": 4,
+          "approvals": 1,
+          "detail": "14 files, +890 -156"
+        }
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "Wave 3 — Sound Toggle",
+      "startedAt": "2026-04-12T11:05:00Z",
+      "endedAt": "2026-04-12T11:38:00Z",
+      "duration": "33m",
+      "status": "completed",
+      "icon": "volume",
+      "summary": "Added SFX/music toggle with persistent preference, mute on tab blur",
+      "toolCalls": 52,
+      "approvals": 8,
+      "filesChanged": 6,
+      "linesAdded": 245,
+      "linesRemoved": 32,
+      "children": [
+        {
+          "id": "step-4a",
+          "type": "research",
+          "name": "Audit audio implementation",
+          "startedAt": "2026-04-12T11:05:00Z",
+          "duration": "3m",
+          "status": "completed",
+          "toolCalls": 8,
+          "approvals": 0,
+          "detail": "Found Howler.js usage, 6 SFX + 1 ambient track, no mute controls"
+        },
+        {
+          "id": "step-4b",
+          "type": "implementation",
+          "name": "Add audio settings store + toggle UI",
+          "startedAt": "2026-04-12T11:08:00Z",
+          "duration": "18m",
+          "status": "completed",
+          "toolCalls": 30,
+          "approvals": 6,
+          "detail": "AudioSettings slice in store, speaker icon toggle, persists to localStorage"
+        },
+        {
+          "id": "step-4c",
+          "type": "verification",
+          "name": "Test toggle + persistence",
+          "startedAt": "2026-04-12T11:26:00Z",
+          "duration": "5m",
+          "status": "completed",
+          "toolCalls": 6,
+          "approvals": 1,
+          "detail": "Toggle mutes all audio, preference survives refresh, tab blur pauses ambient"
+        },
+        {
+          "id": "step-4d",
+          "type": "commit",
+          "name": "git commit: Add sound toggle with persistent preference",
+          "startedAt": "2026-04-12T11:31:00Z",
+          "duration": "1m",
+          "status": "completed",
+          "toolCalls": 4,
+          "approvals": 1,
+          "detail": "6 files, +245 -32"
+        }
+      ]
+    },
+    {
+      "id": "phase-5",
+      "name": "Wave 4 — Balance Pass",
+      "startedAt": "2026-04-12T11:38:00Z",
+      "endedAt": "2026-04-12T12:22:00Z",
+      "duration": "44m",
+      "status": "completed",
+      "icon": "sliders",
+      "summary": "Tuned crafting costs, crop timers, XP curve, and early-game progression",
+      "toolCalls": 42,
+      "approvals": 6,
+      "filesChanged": 5,
+      "linesAdded": 370,
+      "linesRemoved": 148,
+      "children": [
+        {
+          "id": "step-5a",
+          "type": "research",
+          "name": "Analyze current progression curve",
+          "startedAt": "2026-04-12T11:38:00Z",
+          "duration": "8m",
+          "status": "completed",
+          "toolCalls": 10,
+          "approvals": 0,
+          "detail": "Mapped XP table, crafting costs, crop timers. Found: levels 3-5 feel grindy, iron too expensive early"
+        },
+        {
+          "id": "step-5b",
+          "type": "implementation",
+          "name": "Adjust balance constants",
+          "startedAt": "2026-04-12T11:46:00Z",
+          "duration": "20m",
+          "status": "completed",
+          "toolCalls": 22,
+          "approvals": 4,
+          "detail": "Externalized balance to config, reduced early craft costs 30%, smoothed XP curve, added catch-up XP bonus"
+        },
+        {
+          "id": "step-5c",
+          "type": "verification",
+          "name": "Playtest first 10 minutes",
+          "startedAt": "2026-04-12T12:06:00Z",
+          "duration": "10m",
+          "status": "completed",
+          "toolCalls": 4,
+          "approvals": 1,
+          "detail": "Fresh save, played through tutorial → first craft → level 5. Flow feels smooth."
+        },
+        {
+          "id": "step-5d",
+          "type": "commit",
+          "name": "git commit: Balance pass — smoother early progression",
+          "startedAt": "2026-04-12T12:16:00Z",
+          "duration": "1m",
+          "status": "completed",
+          "toolCalls": 4,
+          "approvals": 1,
+          "detail": "5 files, +370 -148"
+        }
+      ]
+    },
+    {
+      "id": "phase-6",
+      "name": "Deploy & Wrap",
+      "startedAt": "2026-04-12T12:22:00Z",
+      "endedAt": "2026-04-12T12:42:00Z",
+      "duration": "20m",
+      "status": "completed",
+      "icon": "rocket",
+      "summary": "Pushed to GitHub, deployed to Cloudflare Pages, ran /wrap",
+      "toolCalls": 14,
+      "approvals": 2,
+      "children": [
+        {
+          "id": "step-6a",
+          "type": "command",
+          "name": "git push + deploy",
+          "startedAt": "2026-04-12T12:22:00Z",
+          "duration": "8m",
+          "status": "completed",
+          "detail": "6 commits pushed, Cloudflare Pages build triggered, live at forge-and-field.pages.dev"
+        },
+        {
+          "id": "step-6b",
+          "type": "verification",
+          "name": "Production smoke test",
+          "startedAt": "2026-04-12T12:30:00Z",
+          "duration": "4m",
+          "status": "completed",
+          "detail": "Tested on phone + desktop: save works, audio toggle works, mobile layout correct"
+        },
+        {
+          "id": "step-6c",
+          "type": "command",
+          "name": "/wrap",
+          "startedAt": "2026-04-12T12:34:00Z",
+          "duration": "8m",
+          "status": "completed",
+          "detail": "Session notes saved to Obsidian, backlog updated, GAME-A-PALOOZA.md items checked off"
+        }
+      ]
+    }
+  ],
+
+  "insights": {
+    "longestPhase": { "name": "Wave 2 — Save System", "duration": "1h 7m" },
+    "mostApprovals": { "name": "Wave 2 — Save System", "count": 18 },
+    "approvalHotspots": [
+      { "type": "bash", "context": "npm run dev / test commands", "count": 14 },
+      { "type": "bash", "context": "git operations", "count": 8 },
+      { "type": "edit", "context": "component modifications", "count": 11 },
+      { "type": "write", "context": "new files (services, types)", "count": 5 }
+    ],
+    "contextHealth": {
+      "startPct": 2,
+      "peakPct": 78,
+      "endPct": 65,
+      "compactions": 2,
+      "recommendation": "Healthy — could handle 1 more wave before needing fresh context"
+    },
+    "velocityByPhase": [
+      { "phase": "Planning", "linesPerMinute": 0, "note": "research only" },
+      { "phase": "Wave 1", "linesPerMinute": 12.3 },
+      { "phase": "Wave 2", "linesPerMinute": 15.6 },
+      { "phase": "Wave 3", "linesPerMinute": 8.4 },
+      { "phase": "Wave 4", "linesPerMinute": 11.8 }
+    ],
+    "sessionScore": {
+      "tasksPlanned": 4,
+      "tasksCompleted": 4,
+      "deployed": true,
+      "rating": "A",
+      "notes": "All planned work shipped. Clean session — no blockers, no context resets."
+    }
+  }
+}

@@ -61,6 +61,19 @@ fn strip_ansi(input: &str) -> String {
 
 const BUFFER_MAX: usize = 2000;
 
+/// Safely slice the last `n` bytes of a string, snapping to a char boundary.
+fn safe_tail(s: &str, n: usize) -> &str {
+    if s.len() <= n {
+        return s;
+    }
+    let mut start = s.len() - n;
+    // Walk forward to the next char boundary
+    while !s.is_char_boundary(start) && start < s.len() {
+        start += 1;
+    }
+    &s[start..]
+}
+
 pub struct OutputAnalyzer {
     state: SessionState,
     last_output_time: Instant,
@@ -114,11 +127,7 @@ impl OutputAnalyzer {
             || clean.contains("Do you want to")
         {
             // Only match if the permission text is in the recent portion (last 500 chars)
-            let recent = if clean.len() > 500 {
-                &clean[clean.len() - 500..]
-            } else {
-                &clean
-            };
+            let recent = safe_tail(&clean, 500);
             if recent.contains("Allow")
                 || recent.contains("(Y/n)")
                 || recent.contains("(y/N)")
@@ -131,11 +140,7 @@ impl OutputAnalyzer {
 
         // Priority 2: Thinking/transfiguring patterns
         {
-            let recent = if clean.len() > 500 {
-                &clean[clean.len() - 500..]
-            } else {
-                &clean
-            };
+            let recent = safe_tail(&clean, 500);
             if recent.contains("Thinking")
                 || recent.contains("Transfiguring")
                 || recent.contains("⏺")
@@ -149,11 +154,7 @@ impl OutputAnalyzer {
 
         // Priority 3: Tool use patterns
         {
-            let recent = if clean.len() > 300 {
-                &clean[clean.len() - 300..]
-            } else {
-                &clean
-            };
+            let recent = safe_tail(&clean, 300);
             if recent.contains("⚙ Read")
                 || recent.contains("⚙ Edit")
                 || recent.contains("⚙ Bash")
@@ -174,11 +175,7 @@ impl OutputAnalyzer {
 
         // Priority 4: Prompt detection (waiting for input)
         {
-            let recent = if clean.len() > 200 {
-                &clean[clean.len() - 200..]
-            } else {
-                &clean
-            };
+            let recent = safe_tail(&clean, 200);
             // Look for prompt at end of output
             let trimmed = recent.trim_end();
             if trimmed.ends_with("❯")
@@ -295,6 +292,16 @@ mod tests {
         analyzer.state = SessionState::Waiting;
         let result = analyzer.analyze("Here is some response text from Claude...");
         assert_eq!(result, Some(SessionState::Streaming));
+    }
+
+    #[test]
+    fn test_multibyte_chars_no_panic() {
+        let mut analyzer = OutputAnalyzer::new();
+        // Claude CLI outputs box-drawing chars (3 bytes each) in its UI
+        let box_art = "─".repeat(800); // 2400 bytes of 3-byte chars
+        analyzer.analyze(&box_art);
+        // Should not panic — the bug was slicing mid-char
+        analyzer.analyze("some more output after box art");
     }
 
     #[test]
