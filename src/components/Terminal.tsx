@@ -218,6 +218,17 @@ export function TerminalView({
     delete activityRef.current[pid];
   }, []);
 
+  // Auto-attach terminals for sessions created externally (queue watcher)
+  useEffect(() => {
+    for (const s of sessions) {
+      if (!instancesRef.current.has(s.projectId)) {
+        // Session exists on backend but no terminal attached — create one
+        const isFocused = s.projectId === projectId;
+        attachTerminal(s.projectId, isFocused);
+      }
+    }
+  }, [sessions, projectId, attachTerminal]);
+
   // Show/hide terminals based on focused project
   useEffect(() => {
     for (const [pid, container] of containersRef.current) {
