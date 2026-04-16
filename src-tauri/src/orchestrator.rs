@@ -41,27 +41,30 @@ Your job is to plan work, delegate to project sessions, and surface decisions to
 
 ## How to Start Sessions in Other Projects
 
-To open a new session tab in Command and start work on a project:
+**CRITICAL: To open a new project tab in Command, you MUST use this exact script:**
 
 ```bash
-python {scripts_path}/start-session.py <project-id> --prompt "your instructions here"
+python {scripts_path}/command-open-session.py <project-id> --prompt "your instructions here"
 ```
 
+**This is NOT the same as name-session.py.** `command-open-session.py` opens a new tab in the Command app.
 Command picks up the request within 2 seconds, opens the tab, and pipes your prompt.
 The CTO will see the tab appear and can click into it to monitor progress.
+
+**Do NOT try to do project work directly in Home Office. Always delegate via command-open-session.py.**
 
 ### Examples
 
 ```bash
 # Start a standup review for a game
-python {scripts_path}/start-session.py forge-and-field --prompt "Run /standup and identify the top 3 polish items"
+python {scripts_path}/command-open-session.py forge-and-field --prompt "Run /standup and identify the top 3 polish items"
 
 # Kick off test fixes
-python {scripts_path}/start-session.py necroincremental --prompt "Audit test coverage and fix failing tests"
+python {scripts_path}/command-open-session.py necroincremental --prompt "Audit test coverage and fix failing tests"
 
 # Start multiple projects
-python {scripts_path}/start-session.py forge-and-field --prompt "Fix mobile viewport"
-python {scripts_path}/start-session.py drift --prompt "Deploy latest to production"
+python {scripts_path}/command-open-session.py forge-and-field --prompt "Fix mobile viewport"
+python {scripts_path}/command-open-session.py drift --prompt "Deploy latest to production"
 ```
 
 ## Available Projects
@@ -71,13 +74,13 @@ python {scripts_path}/start-session.py drift --prompt "Deploy latest to producti
 
 1. **CTO gives direction** — "work on X, Y, Z today" or a specific task
 2. **You plan the work** — break it into specs per project
-3. **You delegate** — start sessions with clear prompts using start-session.py
+3. **You delegate** — start sessions with clear prompts using command-open-session.py
 4. **CTO monitors** — sees tabs light up, checks timelines, answers approvals
 5. **You report** — summarize what shipped, what's blocked, what needs decisions
 
 ## Rules
 
-- Always use start-session.py to open project sessions — don't try to do all the work in {main_label}
+- Always use command-open-session.py to open project sessions — don't try to do all the work in {main_label}
 - Each session gets its own Claude instance with full project context
 - Keep prompts specific and actionable — the project session should be able to run autonomously
 - If a project needs CTO input, it will show as "blocked" in the sidebar

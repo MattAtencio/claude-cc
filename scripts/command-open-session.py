@@ -3,12 +3,12 @@
 Queue a session request for Command app.
 
 Usage:
-  python start-session.py <project-id> [--prompt "your prompt here"]
+  python command-open-session.py <project-id> [--prompt "your prompt here"]
 
 Examples:
-  python start-session.py forge-and-field
-  python start-session.py forge-and-field --prompt "Run /standup and fix the top priority bug"
-  python start-session.py necroincremental --prompt "Audit test coverage and fix failing tests"
+  python command-open-session.py forge-and-field
+  python command-open-session.py forge-and-field --prompt "Run /standup and fix the top priority bug"
+  python command-open-session.py necroincremental --prompt "Audit test coverage and fix failing tests"
 
 Command app polls this queue every 2 seconds and opens sessions automatically.
 """
@@ -26,7 +26,7 @@ QUEUE_PATH = os.path.join(
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: start-session.py <project-id> [--prompt \"...\"]")
+        print("Usage: command-open-session.py <project-id> [--prompt \"...\"]")
         sys.exit(1)
 
     project_id = sys.argv[1]
