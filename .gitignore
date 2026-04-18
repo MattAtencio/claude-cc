@@ -10,3 +10,6 @@ projects/config.json
 # Session state
 sessions.json
 .organizer-state.json
+
+# Local feedback notes — personal learning log, not tracked
+feedback/
